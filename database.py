@@ -1,8 +1,12 @@
 import sqlite3
 
 # sqllite 3 Connect / Created
+import sqlite3
+
+
 class Database:
-    def init(self):
+
+    def __init__(self):
         self.conn = sqlite3.connect("finance.db")
         self.cursor = self.conn.cursor()
         self.create_tables()
@@ -18,8 +22,7 @@ class Database:
         )
         """)
 
-
-        #Transitions Table
+        # Transactions tables
         self.cursor.execute("""
         CREATE TABLE IF NOT EXISTS transactions(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,6 +43,8 @@ class Database:
             amount REAL
         )
         """)
+
+        self.conn.commit()
                             
                             
                             
