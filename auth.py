@@ -25,3 +25,24 @@ class Auth:
 
         except:
             print("Username already exists!")
+
+
+    def login(self):
+
+        username = input("Enter Username: ")
+        password = input("Enter Password: ")
+    
+        self.db.cursor.execute(
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (username, password)
+        )
+    
+        user = self.db.cursor.fetchone()
+    
+        if user:
+            print("Login Successful!")
+            return user[0]
+
+        else:
+            print("Invalid Username or Password!")
+            return None
