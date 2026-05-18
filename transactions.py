@@ -90,22 +90,96 @@ class Transaction:
     def view_transactions(self, user_id):
 
         self.db.cursor.execute(
-        """
-        SELECT type, category, amount, date
-        FROM transactions
-        WHERE user_id = ?
-        """,
-        (user_id,)
-    )
+            """
+            SELECT id, type, category, amount, date
+            FROM transactions
+            WHERE user_id = ?
+            """,
+            (user_id,)
+        )
 
-        records = self.db.cursor.fetchall() # pyr
+        records = self.db.cursor.fetchall()
 
         if records:
 
             print("\n===== Transaction History =====")
 
             for row in records:
-                print(f"{row[0]} | {row[1]} | ₹{row[2]} | {row[3]}")
+                print(f"ID:{row[0]} | {row[1]} | {row[2]} | ₹{row[3]} | {row[4]}")
 
         else:
-            print("No transactions found!")    
+            print("No transactions found!")
+
+    def update_transaction(self, user_id):
+
+        self.view_transactions(user_id)
+
+        transaction_id = input("Enter Transaction ID to update: ")
+
+        new_amount = float(input("Enter New Amount: "))
+
+        self.db.cursor.execute(
+            """
+            UPDATE transactions
+            SET amount = ?
+            WHERE id = ? AND user_id = ?
+            """,
+            (new_amount, transaction_id, user_id)
+        )
+
+        self.db.conn.commit()
+
+        print("Transaction Updated Successfully!")
+
+    def delete_transaction(self, user_id):
+
+        self.view_transactions(user_id)
+
+        transaction_id = input("Enter Transaction ID to delete: ")
+
+        self.db.cursor.execute(
+            """
+            DELETE FROM transactions
+            WHERE id = ? AND user_id = ?
+            """,
+            (transaction_id, user_id)
+        )
+
+        self.db.conn.commit()
+
+        print("Transaction Deleted Successfully!")  
+
+    def monthly_report(self, user_id):
+
+    # Total Income
+        self.db.cursor.execute(
+            """
+            SELECT SUM(amount)
+            FROM transactions
+            WHERE user_id = ? AND type = 'income'
+            """,
+            (user_id,)
+        )
+
+        income = self.db.cursor.fetchone()[0] or 0
+
+
+        # Total Expense
+        self.db.cursor.execute(
+            """
+            SELECT SUM(amount)
+            FROM transactions
+            WHERE user_id = ? AND type = 'expense'
+            """,
+            (user_id,)
+        )
+
+        expense = self.db.cursor.fetchone()[0] or 0
+
+
+        savings = income - expense
+
+        print("\n===== Monthly Report =====")
+        print(f"Total Income: ₹{income}")
+        print(f"Total Expense: ₹{expense}")
+        print(f"Total Savings: ₹{savings}")      

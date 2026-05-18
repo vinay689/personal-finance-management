@@ -25,6 +25,8 @@ while True:
     elif choice == "2":
 
         user_id = auth.login()
+    else:
+        break    
 
     if user_id:
 
@@ -33,7 +35,10 @@ while True:
             print("1.Add Income")
             print("2.Add Expenses")
             print("3.View Transactions")
-            print("4.Logout")
+            print("4.Update Transaction")
+            print("5.Delete Transaction")
+            print("6.Monthly Report")
+            print("7.Logout")
 
             user_choice = input("Enter choice: ")
 
@@ -47,9 +52,18 @@ while True:
                 transaction.view_transactions(user_id)
 
             elif user_choice == "4":
+                transaction.update_transaction(user_id)  
+
+            elif user_choice == "5":
+                transaction.delete_transaction(user_id)      
+
+            elif user_choice == "6":
+                transaction.monthly_report(user_id)    
+
+            elif user_choice == "7":
                 break    
 
-    elif choice == "4":
+    elif choice == "8":
         print("Thank you!")
         break
 
