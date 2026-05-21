@@ -2,6 +2,7 @@ from database import Database
 from auth import Auth
 from transactions import Transaction
 
+
 db = Database()
 
 transaction = Transaction()
@@ -26,7 +27,7 @@ while True:
 
         user_id = auth.login()
     else:
-        break    
+        break
 
     if user_id:
 
@@ -38,7 +39,12 @@ while True:
             print("4.Update Transaction")
             print("5.Delete Transaction")
             print("6.Monthly Report")
-            print("7.Logout")
+            print("7.Category_report")
+            print("8.Set Budget")
+            print("9.View Budget Report")
+            print("10.Yearly Report")
+            print("11.Backup Data")
+            print("12.Logout")
 
             user_choice = input("Enter choice: ")
 
@@ -61,6 +67,21 @@ while True:
                 transaction.monthly_report(user_id)    
 
             elif user_choice == "7":
+                transaction.category_report(user_id)
+
+            elif user_choice == "8":
+                transaction.set_budget(user_id)
+
+            elif user_choice == "9":
+                transaction.view_budget_report(user_id)    
+
+            elif user_choice == "10":
+                transaction.yearly_report(user_id)
+
+            elif user_choice == "11":
+                transaction.backup_data()
+
+            elif user_choice == "12":
                 break    
 
     elif choice == "8":
