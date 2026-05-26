@@ -44,7 +44,8 @@ while True:
             print("9.View Budget Report")
             print("10.Yearly Report")
             print("11.Backup Data")
-            print("12.Logout")
+            print("12.Restore Data")
+            print("13.Logout")
 
             user_choice = input("Enter choice: ")
 
@@ -82,7 +83,10 @@ while True:
                 transaction.backup_data()
 
             elif user_choice == "12":
-                break    
+                transaction.restore_data()
+
+            elif user_choice == "13":
+                break   
 
     elif choice == "8":
         print("Thank you!")

@@ -8,6 +8,7 @@ class Transaction:
     def __init__(self):
         self.db = Database()
 
+
     def add_income(self, user_id):
 
         categories = {
@@ -31,7 +32,17 @@ class Transaction:
 
         category = categories[choice]
 
-        amount = float(input("Enter amount: "))
+        try:
+
+            amount = float(input("Enter amount: "))
+
+            if amount <= 0:
+                print("Amount must be greater than 0!")
+                return
+
+        except:
+            print("Invalid amount!")
+            return
 
         date = datetime.now().strftime("%Y-%m-%d")
 
@@ -57,7 +68,7 @@ class Transaction:
             "4": "Travel"
         }
 
-        print("Select Expense Category:")
+        print("\nSelect Expense Category:")
         print("1. Food")
         print("2. Rent")
         print("3. Shopping")
@@ -71,7 +82,17 @@ class Transaction:
 
         category = categories[choice]
 
-        amount = float(input("Enter amount: "))
+        try:
+
+            amount = float(input("Enter amount: "))
+
+            if amount <= 0:
+                print("Amount must be greater than 0!")
+                return
+
+        except:
+            print("Invalid amount!")
+            return
 
         date = datetime.now().strftime("%Y-%m-%d")
 
@@ -119,7 +140,7 @@ class Transaction:
             total_expense = self.db.cursor.fetchone()[0] or 0
 
             if total_expense > budget_amount:
-                print(f"Warning! You exceeded your {category} budget!")     
+                print(f"Warning! You exceeded your {category} budget!")
 
 
     def view_transactions(self, user_id):
@@ -145,13 +166,24 @@ class Transaction:
         else:
             print("No transactions found!")
 
+
     def update_transaction(self, user_id):
 
         self.view_transactions(user_id)
 
         transaction_id = input("Enter Transaction ID to update: ")
 
-        new_amount = float(input("Enter New Amount: "))
+        try:
+
+            new_amount = float(input("Enter New Amount: "))
+
+            if new_amount <= 0:
+                print("Amount must be greater than 0!")
+                return
+
+        except:
+            print("Invalid amount!")
+            return
 
         self.db.cursor.execute(
             """
@@ -164,7 +196,12 @@ class Transaction:
 
         self.db.conn.commit()
 
-        print("Transaction Updated Successfully!")
+        if self.db.cursor.rowcount > 0:
+            print("Transaction Updated Successfully!")
+
+        else:
+            print("Transaction ID not found!")
+            
 
     def delete_transaction(self, user_id):
 
@@ -182,11 +219,16 @@ class Transaction:
 
         self.db.conn.commit()
 
-        print("Transaction Deleted Successfully!")  
+        if self.db.cursor.rowcount > 0:
+            print("Transaction Deleted Successfully!")
+
+        else:
+            print("Transaction ID not found!")
 
     def monthly_report(self, user_id):
 
-    # Total Income
+        # Total Income
+
         self.db.cursor.execute(
             """
             SELECT SUM(amount)
@@ -200,6 +242,7 @@ class Transaction:
 
 
         # Total Expense
+
         self.db.cursor.execute(
             """
             SELECT SUM(amount)
@@ -215,9 +258,10 @@ class Transaction:
         savings = income - expense
 
         print("\n===== Monthly Report =====")
+
         print(f"Total Income: ₹{income}")
         print(f"Total Expense: ₹{expense}")
-        print(f"Total Savings: ₹{savings}")     
+        print(f"Total Savings: ₹{savings}")
 
 
     def category_report(self, user_id):
@@ -242,7 +286,8 @@ class Transaction:
                 print(f"{row[0]} : ₹{row[1]}")
 
         else:
-            print("No records found!")       
+            print("No records found!")
+
 
     def set_budget(self, user_id):
 
@@ -267,7 +312,17 @@ class Transaction:
 
         category = categories[choice]
 
-        amount = float(input("Enter Budget Amount: "))
+        try:
+
+            amount = float(input("Enter Budget Amount: "))
+
+            if amount <= 0:
+                print("Budget amount must be greater than 0!")
+                return
+
+        except:
+            print("Invalid budget amount!")
+            return
 
         self.db.cursor.execute(
             """
@@ -279,7 +334,8 @@ class Transaction:
 
         self.db.conn.commit()
 
-        print("Budget Set Successfully!")          
+        print("Budget Set Successfully!")
+
 
     def view_budget_report(self, user_id):
 
@@ -324,13 +380,15 @@ class Transaction:
                 print(f"Remaining: ₹{remaining}")
 
         else:
-            print("No budgets found!")    
+            print("No budgets found!")
+
 
     def yearly_report(self, user_id):
 
         year = input("Enter Year (YYYY): ")
-
-        # Total Income
+        if not year.isdigit() or len(year) != 4:
+            print("Invalid year format!")
+            return
 
         self.db.cursor.execute(
             """
@@ -345,8 +403,6 @@ class Transaction:
 
         income = self.db.cursor.fetchone()[0] or 0
 
-
-        # Total Expense
 
         self.db.cursor.execute(
             """
@@ -369,7 +425,8 @@ class Transaction:
         print(f"Year: {year}")
         print(f"Total Income: ₹{income}")
         print(f"Total Expense: ₹{expense}")
-        print(f"Total Savings: ₹{savings}")        
+        print(f"Total Savings: ₹{savings}")
+
 
     def backup_data(self):
 
@@ -384,4 +441,23 @@ class Transaction:
             print("Backup Created Successfully!")
 
         except:
-            print("Error creating backup!")    
+            print("Error creating backup!")
+
+
+    def restore_data(self):
+
+        source = "finance_backup.db"
+
+        destination = "finance.db"
+
+        try:
+
+            shutil.copy(source, destination)
+
+            print("Database Restored Successfully!")
+
+        except FileNotFoundError:
+            print("Backup file not found!")
+
+        except:
+            print("Error restoring database!")
